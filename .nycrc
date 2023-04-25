@@ -1,0 +1,9 @@
+{
+    "$schema": "https://json.schemastore.org/nycrc",
+    "extends": "@istanbuljs/nyc-config-typescript",
+    "all": true,
+    "reporter": [
+        "lcov",
+        "text-summary"
+    ]
+}

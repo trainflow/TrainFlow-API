@@ -1,0 +1,10 @@
+{
+    "Private NestJS logger": {
+        "prefix": "nestlog",
+        "body": [
+            "private readonly logger = new Logger(${1:entity}.name)"
+        ],
+        "scope": "typescript,javascript",
+        "description": "Instantiates a private NestJS logger."
+    }
+}

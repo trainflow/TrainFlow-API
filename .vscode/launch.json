@@ -1,0 +1,62 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run tests",
+      "request": "launch",
+      "runtimeArgs": [
+        "run-script",
+        "test"
+      ],
+      "runtimeExecutable": "pnpm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Watch and run tests",
+      "request": "launch",
+      "runtimeArgs": [
+        "run-script",
+        "test:watch"
+      ],
+      "runtimeExecutable": "pnpm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Watch and run",
+      "request": "launch",
+      "runtimeArgs": [
+        "run-script",
+        "start:dev"
+      ],
+      "runtimeExecutable": "pnpm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run",
+      "request": "launch",
+      "runtimeArgs": [
+        "run-script",
+        "start"
+      ],
+      "runtimeExecutable": "pnpm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": []
+}

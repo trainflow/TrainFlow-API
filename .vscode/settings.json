@@ -1,0 +1,42 @@
+{
+    "remote.SSH.defaultForwardedPorts": [
+        {
+            "localPort": 3000,
+            "remotePort": 3000,
+            "name": "dev port"
+        },
+        {
+            "localPort": 5432,
+            "remotePort": 5432,
+            "name": "postgres dev"
+        },
+        {
+            "localPort": 6432,
+            "remotePort": 6432,
+            "name": "postgres test"
+        }
+    ],
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+        "source.fixAll": true,
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "dist": true,
+        "node_modules": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "dist": true
+    },
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "javascript.preferences.importModuleSpecifier": "relative",
+    "coverage-gutters.coverageReportFileName": "coverage/lcov.info"
+}
