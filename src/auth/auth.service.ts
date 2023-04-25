@@ -8,12 +8,17 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { verify } from 'argon2';
 import { Cache } from 'cache-manager';
+import { createHash, randomBytes } from 'crypto';
 import { JsonWebTokenError } from 'jsonwebtoken';
+import { Repository } from 'typeorm';
+import { EmailsService } from '../emails/emails.service';
 import { Duration } from '../models/duration.model';
 import { User } from '../users/user.entity';
 import { UserWithoutPassword, UsersService } from '../users/users.service';
+import { ForgotPasswordToken } from './forgot-password-token.entity';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +28,9 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private emailsService: EmailsService,
+    @InjectRepository(ForgotPasswordToken)
+    private forgotPasswordTokenRepository: Repository<ForgotPasswordToken>,
     @Inject(CACHE_MANAGER) private cacheStore: Cache,
   ) {}
 
@@ -63,6 +71,30 @@ export class AuthService {
 
     return cached.userId;
   }
+
+  async forgotPassword(email: string) {
+    const user = await this.userService.findOneByEmail(email);
+    if (!user) {
+      return;
+    }
+
+    const token = this.generateForgotPasswordToken();
+    const hash = createHash('sha256').update(token).digest('hex');
+
+    const forgotPasswordToken = new ForgotPasswordToken({
+      token: hash,
+      user,
+      expiry: new Date(Date.now() + new Duration({ days: 1 }).toMilliseconds()),
+    });
+
+    await this.forgotPasswordTokenRepository.save(forgotPasswordToken);
+    await this.emailsService.sendForgotPasswordEmail(forgotPasswordToken);
+  }
+
+  generateForgotPasswordToken() {
+    return randomBytes(64).toString('hex');
+  }
+
   async refresh(refreshToken: string) {
     const userId = await this.validateRefreshToken(refreshToken);
 

@@ -1,3 +1,6 @@
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MailerAsyncOptions } from '@nestjs-modules/mailer/dist/interfaces/mailer-async-options.interface';
 import {
   CacheModule,
   CacheModuleAsyncOptions,
@@ -8,13 +11,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { StoreConfig } from 'cache-manager';
 import { RedisStore, redisStore } from 'cache-manager-redis-yet';
+import { join, resolve } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { UsersModule } from './users/users.module';
-
 let redis: RedisStore;
 const redisAsyncOptions: CacheModuleAsyncOptions<StoreConfig> = {
   inject: [ConfigService],
@@ -60,6 +63,31 @@ export const typeOrmAsyncOptions: TypeOrmModuleAsyncOptions = {
   },
 };
 
+export const mailerAsyncOptions: MailerAsyncOptions = {
+  useFactory: (configService: ConfigService) => {
+    const smtpHost = configService.get<string>('SMTP_HOST');
+    const smtpPort = configService.get<number>('SMTP_PORT');
+    const smtpUser = configService.get<string>('SMTP_USER');
+    const smtpPassword = configService.get<string>('SMTP_PASSWORD');
+    return {
+      transport: `smtp://${smtpUser}:${smtpPassword}@${smtpHost}:${smtpPort}}`,
+      defaults: {
+        from: '"TrainFlow" <trainflow@gmail.com>',
+      },
+      template: {
+        dir: resolve(join('templates')),
+        adapter: new HandlebarsAdapter(undefined, {
+          inlineCssEnabled: true,
+        }),
+        options: {
+          strict: true,
+        },
+      },
+    };
+  },
+  inject: [ConfigService],
+};
+
 @Module({
   imports: [
     AuthModule,
@@ -67,6 +95,7 @@ export const typeOrmAsyncOptions: TypeOrmModuleAsyncOptions = {
     ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.registerAsync(redisAsyncOptions),
     TypeOrmModule.forRootAsync(typeOrmAsyncOptions),
+    MailerModule.forRootAsync(mailerAsyncOptions),
     FilesModule,
   ],
   controllers: [AppController, AuthController],

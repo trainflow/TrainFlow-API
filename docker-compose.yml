@@ -10,6 +10,7 @@ services:
     depends_on:
       - redis
       - postgres
+      - mailhog
 
     networks:
       - default
@@ -26,6 +27,8 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
+      - SMTP_HOST=mailhog
+      - SMTP_PORT=1025
     volumes:
       - ./assets:/app/assets:rw
 
@@ -59,6 +62,13 @@ services:
     volumes:
       - persistent:/data
 
+  mailhog:
+    build:
+      context: .
+      dockerfile: ./docker/mailhog/Dockerfile
+    ports:
+      - 1025:1025 # smtp server
+      - 8025:8025 # web ui
 networks:
   default:
 

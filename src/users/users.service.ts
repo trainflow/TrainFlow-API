@@ -23,9 +23,15 @@ export class UsersService {
   async delete(id: number) {
     return this.userRepository.delete({ id });
   }
+
+  async findOneByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ email });
+  }
+
   async findOneById(id: number): Promise<User | null> {
     return this.userRepository.findOneBy({ id });
   }
+
   async findOneByUsername(username: string): Promise<User | null> {
     return this.userRepository.findOneBy({ username });
   }
