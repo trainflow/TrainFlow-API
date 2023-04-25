@@ -50,7 +50,6 @@ services:
       - ${POSTGRES_TEST_PORT}:5432
 
   redis:
-    container_name: redis
     image: redis:7-alpine
     networks:
       - default
