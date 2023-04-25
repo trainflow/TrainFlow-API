@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as argon2 from 'argon2';
+import { cpus } from 'os';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
 
@@ -34,9 +35,9 @@ export class UsersService {
     plainTextPassword: string,
   ): Promise<User> {
     const encryptedPassword = await argon2.hash(plainTextPassword, {
-      memoryCost: 19456,
-      timeCost: 2,
-      parallelism: 1,
+      memoryCost: 65536,
+      timeCost: 16,
+      parallelism: cpus().length,
       type: argon2.argon2id,
     });
     const entity = new User({ ...user, password: encryptedPassword });
