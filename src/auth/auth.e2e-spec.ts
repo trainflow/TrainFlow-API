@@ -13,6 +13,7 @@ describe('AuthController (E2E)', function () {
   const userDTO: UserDTO = {
     password: 'testpassword',
     username: 'testusername',
+    email: 'testemail@email.com',
   };
 
   let userId: number;

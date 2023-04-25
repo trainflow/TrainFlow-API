@@ -47,6 +47,7 @@ export async function setupLoggedUser(
   const userDTO: UserDTO = {
     password: 'testpassword',
     username: 'testusername',
+    email: 'testemail@email.com',
   };
 
   let response = await supertest(server).post('/users').send(userDTO);

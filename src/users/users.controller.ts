@@ -14,7 +14,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
@@ -27,6 +27,10 @@ export class UserDTO {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
   @IsOptional()
   @IsString()
