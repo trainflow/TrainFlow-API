@@ -121,6 +121,9 @@ export class FilesService {
   private async cleanOrphans() {
     const files = await readdir('assets');
     const storedFiles = await this.storedFileRepository.find();
+    if (!storedFiles) {
+      return;
+    }
     const difference = files.filter(
       (file) => !storedFiles.find((storedFile) => file === storedFile.name),
     );

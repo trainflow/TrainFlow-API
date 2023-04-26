@@ -2,10 +2,12 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { expect } from 'chai';
 import Sinon from 'sinon';
-import { TestCache } from '../tests/utils';
+import { EmailsService } from '../emails/emails.service';
+import { TestCache, createStubbedRepository } from '../tests/utils';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
+import { ForgotPasswordToken } from './forgot-password-token.entity';
 
 describe('auth', function () {
   let authService: AuthService;
@@ -20,6 +22,8 @@ describe('auth', function () {
       usersService,
       new JwtService({ secret: 'testPrivateKey' }),
       new ConfigService(),
+      Sinon.createStubInstance(EmailsService),
+      createStubbedRepository<ForgotPasswordToken>(),
       cache,
     );
 

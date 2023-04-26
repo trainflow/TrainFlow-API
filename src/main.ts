@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import AppModule from './app.module';
+import { HttpExceptionFilter } from './filters/http.filter';
 import { TypeOrmExceptionFilter } from './filters/typeorm.filter';
 
 async function bootstrap() {
@@ -9,7 +10,7 @@ async function bootstrap() {
   app.enableShutdownHooks();
 
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new TypeOrmExceptionFilter());
+  app.useGlobalFilters(new TypeOrmExceptionFilter(), new HttpExceptionFilter());
   await app.listen(3000);
 }
 bootstrap();

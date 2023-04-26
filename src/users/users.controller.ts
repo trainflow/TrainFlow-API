@@ -14,7 +14,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
@@ -25,6 +31,7 @@ export class UserDTO {
   username: string;
 
   @IsString()
+  @IsStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1 })
   @IsNotEmpty()
   password: string;
 

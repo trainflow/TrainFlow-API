@@ -1,5 +1,6 @@
 import {
   CACHE_MANAGER,
+  HttpException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -88,7 +89,32 @@ export class AuthService {
     });
 
     await this.forgotPasswordTokenRepository.save(forgotPasswordToken);
-    await this.emailsService.sendForgotPasswordEmail(forgotPasswordToken);
+    await this.emailsService.sendForgotPasswordEmail({
+      ...forgotPasswordToken,
+      token,
+    });
+  }
+
+  async resetPassword(token: string, password: string) {
+    const hashedToken = createHash('sha256').update(token).digest('hex');
+    const forgotPasswordToken =
+      await this.forgotPasswordTokenRepository.findOne({
+        where: { token: hashedToken },
+        relations: ['user'],
+      });
+
+    if (!forgotPasswordToken) {
+      throw new HttpException('message', 401);
+      // throw new UnauthorizedException('Invalid token');
+    }
+
+    const user = forgotPasswordToken.user;
+
+    await this.forgotPasswordTokenRepository.delete({ userId: user.id });
+    if (forgotPasswordToken.expiry < new Date()) {
+      throw new UnauthorizedException('Token expired');
+    }
+    await this.userService.updatePassword(user, password);
   }
 
   generateForgotPasswordToken() {

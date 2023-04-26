@@ -11,7 +11,7 @@ describe('AuthController (E2E)', function () {
   let server: HttpServer;
 
   const userDTO: UserDTO = {
-    password: 'testpassword',
+    password: 'TestPassword123@',
     username: 'testusername',
     email: 'testemail@email.com',
   };

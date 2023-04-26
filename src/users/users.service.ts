@@ -2,6 +2,7 @@ import {
   ClassSerializerInterceptor,
   ConflictException,
   Injectable,
+  Logger,
   UseInterceptors,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +16,7 @@ export type UserWithoutPassword = Omit<User, 'password'>;
 @Injectable()
 @UseInterceptors(ClassSerializerInterceptor)
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -36,19 +38,32 @@ export class UsersService {
     return this.userRepository.findOneBy({ username });
   }
 
-  async create(
-    user: Omit<DeepPartial<User>, 'password'>,
-    plainTextPassword: string,
-  ): Promise<User> {
-    const encryptedPassword = await argon2.hash(plainTextPassword, {
+  async hashPassword(plainTextPassword: string): Promise<string> {
+    return argon2.hash(plainTextPassword, {
       memoryCost: 65536,
       timeCost: 16,
       parallelism: cpus().length,
       type: argon2.argon2id,
     });
+  }
+
+  async create(
+    user: Omit<DeepPartial<User>, 'password'>,
+    plainTextPassword: string,
+  ): Promise<User> {
+    const encryptedPassword = await this.hashPassword(plainTextPassword);
     const entity = new User({ ...user, password: encryptedPassword });
     await this.userRepository.insert(entity);
     return entity;
+  }
+
+  async updatePassword(user: User, password: string) {
+    const hashedPassword = await this.hashPassword(password);
+    await this.userRepository.update(
+      { id: user.id },
+      { password: hashedPassword },
+    );
+    this.logger.verbose(`Updated password for user ${user.id}`);
   }
 
   private async setActive(userId: number, active: boolean) {

@@ -45,7 +45,7 @@ export async function setupLoggedUser(
   server: HttpServer,
 ): Promise<{ accessToken: string; refreshToken: string; userId: string }> {
   const userDTO: UserDTO = {
-    password: 'testpassword',
+    password: 'TestPassword123@',
     username: 'testusername',
     email: 'testemail@email.com',
   };

@@ -11,7 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { User } from '../users/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
@@ -30,6 +30,16 @@ class RefreshTokenBody {
 class ForgotPasswordBody {
   @IsEmail()
   email: string;
+}
+
+class ResetPasswordBody {
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+  @IsString()
+  @IsNotEmpty()
+  // @IsStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1 })
+  password: string;
 }
 
 @Controller('auth')
@@ -65,6 +75,12 @@ export class AuthController {
   @HttpCode(200)
   async forgotPassword(@Body() body: ForgotPasswordBody) {
     return this.authService.forgotPassword(body.email);
+  }
+
+  @Post('reset-password')
+  @HttpCode(200)
+  async resetPassword(@Body() body: ResetPasswordBody) {
+    await this.authService.resetPassword(body.token, body.password);
   }
 
   @Get('me')
