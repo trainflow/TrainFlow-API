@@ -70,7 +70,11 @@ export const mailerAsyncOptions: MailerAsyncOptions = {
     const smtpUser = configService.get<string>('SMTP_USER');
     const smtpPassword = configService.get<string>('SMTP_PASSWORD');
     return {
-      transport: `smtp://${smtpUser}:${smtpPassword}@${smtpHost}:${smtpPort}}`,
+      transport: {
+        host: smtpHost,
+        port: smtpPort,
+        auth: { user: smtpUser ?? '', pass: smtpPassword ?? '' },
+      },
       defaults: {
         from: '"TrainFlow" <trainflow@gmail.com>',
       },
