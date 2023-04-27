@@ -16,6 +16,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
+  IsBoolean,
   IsEmail,
   IsEmpty,
   IsNotEmpty,
@@ -74,7 +75,7 @@ export class UserEditDTO {
   @IsOptional()
   lastName?: string;
 
-  @IsEmpty()
+  @IsBoolean()
   @IsOptional()
   isActive?: boolean;
 }
