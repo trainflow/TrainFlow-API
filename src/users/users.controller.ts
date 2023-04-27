@@ -8,6 +8,7 @@ import {
   Logger,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Request,
   UnauthorizedException,
@@ -16,6 +17,7 @@ import {
 } from '@nestjs/common';
 import {
   IsEmail,
+  IsEmpty,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -48,11 +50,62 @@ export class UserDTO {
   lastName?: string;
 }
 
+export class UserEditDTO {
+  @IsEmpty()
+  id?: number;
+
+  @IsString()
+  @IsOptional()
+  username?: string;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @IsStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1 })
+  @IsOptional()
+  password: string;
+
+  @IsString()
+  @IsOptional()
+  firstName?: string;
+
+  @IsString()
+  @IsOptional()
+  lastName?: string;
+
+  @IsEmpty()
+  @IsOptional()
+  isActive?: boolean;
+}
+
 @Controller('users')
 export class UsersController {
   private logger = new Logger(UsersController.name);
 
   constructor(private usersService: UsersService) {}
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Patch('/:id')
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() user: UserEditDTO,
+    @Request() request: any,
+  ): Promise<User> {
+    if (request.user.userId !== id) {
+      throw new UnauthorizedException('User id mismatch');
+    }
+    this.logger.verbose(`User ${id} has been updated`);
+    const existing = await this.usersService.findOneById(id);
+    if (existing == null) {
+      throw new ConflictException('User does not exist');
+    }
+
+    const newUser = { ...existing, ...user };
+    const updated = await this.usersService.update(newUser);
+    return new User(updated);
+  }
 
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/')

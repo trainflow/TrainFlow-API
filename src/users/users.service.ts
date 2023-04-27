@@ -26,6 +26,10 @@ export class UsersService {
     return this.userRepository.delete({ id });
   }
 
+  async update(user: Partial<UserWithoutPassword>) {
+    return this.userRepository.save(user);
+  }
+
   async findOneByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOneBy({ email });
   }
