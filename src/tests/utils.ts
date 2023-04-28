@@ -3,13 +3,13 @@ import { expect } from 'chai';
 import Sinon from 'sinon';
 import { ObjectLiteral, Repository } from 'typeorm';
 
-import { HttpServer, INestApplication, ValidationPipe } from '@nestjs/common';
+import { HttpServer, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { STATUS_CODES } from 'http';
 import supertest from 'supertest';
 import AppModule from '../app.module';
-import { TypeOrmExceptionFilter } from '../filters/typeorm.filter';
 import { UserDTO } from '../users/users.controller';
+import { boot } from '../utils/bootstrap';
 
 export async function expectThrowsAsync(
   actual: Promise<any>,
@@ -83,8 +83,7 @@ export async function setupApplication(): Promise<E2ETestSuite> {
 
   const app = module.createNestApplication();
   const server = app.getHttpServer();
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new TypeOrmExceptionFilter());
+  boot(app);
 
   await app.init();
   return { app, server, module };

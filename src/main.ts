@@ -1,16 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import AppModule from './app.module';
-import { HttpExceptionFilter } from './filters/http.filter';
-import { TypeOrmExceptionFilter } from './filters/typeorm.filter';
+import { boot } from './utils/bootstrap';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
-  // Starts listening for shutdown hooks
-  app.enableShutdownHooks();
-
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new TypeOrmExceptionFilter(), new HttpExceptionFilter());
+  boot(app);
   await app.listen(3000);
 }
 bootstrap();
