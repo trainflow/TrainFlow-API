@@ -43,6 +43,36 @@ describe('AuthController (E2E)', function () {
     await module.close();
   });
 
+  describe('User logout behavior', function () {
+    let refreshToken: string;
+    let accessToken: string;
+
+    // Login
+    beforeEach(async function () {
+      const response = await request(server)
+        .post('/auth/login')
+        .send(userDTO)
+        .expect(code(200));
+
+      ({ refreshToken, accessToken } = response.body);
+    });
+
+    it('logs out', async function () {
+      await request(server)
+        .post('/auth/logout')
+        .auth(accessToken, { type: 'bearer' })
+        .send({ refreshToken })
+        .expect(code(204));
+    });
+
+    it('does not log out if refresh token is invalid', async function () {
+      await request(server)
+        .post('/auth/logout')
+        .send({ refreshToken: 'invalidtoken' })
+        .expect(code(401));
+    });
+  });
+
   describe('User login behavior', function () {
     it('logins', async function () {
       const response = await request(server)
