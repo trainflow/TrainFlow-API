@@ -12,9 +12,7 @@ import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { StoreConfig } from 'cache-manager';
 import { RedisStore, redisStore } from 'cache-manager-redis-yet';
 import { join, resolve } from 'path';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { UsersModule } from './users/users.module';
@@ -102,7 +100,6 @@ export const mailerAsyncOptions: MailerAsyncOptions = {
     MailerModule.forRootAsync(mailerAsyncOptions),
     FilesModule,
   ],
-  controllers: [AppController, AuthController],
   providers: [AppService],
 })
 export default class AppModule implements OnApplicationShutdown {

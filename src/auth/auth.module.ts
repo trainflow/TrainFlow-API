@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailsService } from '../emails/emails.service';
 import { UsersModule } from '../users/users.module';
 import { AccessTokenStrategy } from './access-token.strategy';
+import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { ForgotPasswordToken } from './forgot-password-token.entity';
 import { LocalStrategy } from './local.strategy';
@@ -30,5 +31,6 @@ import { LocalStrategy } from './local.strategy';
   ],
   providers: [AuthService, LocalStrategy, AccessTokenStrategy, EmailsService],
   exports: [AuthService],
+  controllers: [AuthController],
 })
 export class AuthModule {}
