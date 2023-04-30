@@ -17,6 +17,7 @@ import { AppService } from './app.service';
 import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
+import { FoodDiaryModule } from './food-diary/food-diary.module';
 import { UsersModule } from './users/users.module';
 let redis: RedisStore;
 const redisAsyncOptions: CacheModuleAsyncOptions<StoreConfig> = {
@@ -101,6 +102,7 @@ export const mailerAsyncOptions: MailerAsyncOptions = {
     TypeOrmModule.forRootAsync(typeOrmAsyncOptions),
     MailerModule.forRootAsync(mailerAsyncOptions),
     FilesModule,
+    FoodDiaryModule,
   ],
   controllers: [AppController, AuthController],
   providers: [AppService],
